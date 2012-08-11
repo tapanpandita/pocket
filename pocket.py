@@ -1,9 +1,18 @@
 import requests
-import urllib
+from functools import wraps
 try:
     import json
 except ImportError:
     import simplejson as json
+
+def method_wrapper(fn):
+    @wraps(fn)
+    def wrapped(self, *args, **kwargs):
+        print 'from wrapper: ', fn.__name__
+        print kwargs
+        payload = dict([(k, v) for k, v in kwargs.iteritems() if v])
+        fn(self, *args, **kwargs)
+    return wrapped
 
 class Pocket:
     def __init__(self, username, password, api_key):
@@ -18,7 +27,11 @@ class Pocket:
         self.api_endpoints = {
             'add': 'https://readitlaterlist.com/v2/add',
             'send': 'https://readitlaterlist.com/v2/send',
+            'get': 'https://readitlaterlist.com/v2/get',
+            'stats': 'https://readitlaterlist.com/v2/stats',
             'auth': 'https://readitlaterlist.com/v2/auth',
+            'signup': 'https://readitlaterlist.com/v2/signup',
+            'api': 'https://readitlaterlist.com/v2/api',
         }
         self.statuses = {
             200: 'Request was successful.',
@@ -49,6 +62,14 @@ class Pocket:
     def get_list(self, format, state, myAppOnly, since, count, page, tags):
         pass
 
+    def stats(self, format='json'):
+        r = requests.post(self.api_endpoints['stats'], data=self._payload)
+        if r.status_code > 399:
+            error_msg = self.statuses.get(r.status_code)
+            extra_info = r.headers.get('X-Error')
+            raise Exception('%s %s' % (error_msg, extra_info))
+        return json.loads(r.content)
+
     def auth(self):
         r = requests.post(self.api_endpoints['auth'], data=self._payload)
         if r.status_code > 399:
@@ -57,3 +78,21 @@ class Pocket:
             raise Exception('%s %s' % (error_msg, extra_info))
         print r.content
         return self
+
+    def signup(self):
+        r = requests.post(self.api_endpoints['signup'], data=self._payload)
+        if r.status_code > 399:
+            error_msg = self.statuses.get(r.status_code)
+            extra_info = r.headers.get('X-Error')
+            raise Exception('%s %s' % (error_msg, extra_info))
+        return json.loads(r.content)
+
+    @method_wrapper
+    def api(self):
+        r = requests.post(self.api_endpoints['api'], data={'apikey': self.api_key})
+        if r.status_code > 399:
+            error_msg = self.statuses.get(r.status_code)
+            extra_info = r.headers.get('X-Error')
+            raise Exception('%s %s' % (error_msg, extra_info))
+        print r.content
+        return r.headers
