@@ -30,3 +30,12 @@ pip-log.txt
 include/
 lib/
 local/
+
+# ViM files
+.*.swp
+.*.swo
+
+# Misc
+*.log
+*.pid
+*.sql
