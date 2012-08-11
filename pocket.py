@@ -8,10 +8,18 @@ except ImportError:
 def method_wrapper(fn):
     @wraps(fn)
     def wrapped(self, *args, **kwargs):
-        print 'from wrapper: ', fn.__name__
-        print kwargs
         payload = dict([(k, v) for k, v in kwargs.iteritems() if v])
-        fn(self, *args, **kwargs)
+        payload.update(self._payload)
+        r = requests.post(self.api_endpoints[fn.__name__], data=payload)
+        if r.status_code > 399:
+            error_msg = self.statuses.get(r.status_code)
+            extra_info = r.headers.get('X-Error')
+            ExceptionClass = type('%sException' % fn.__name__.capitalize(),
+                (Exception, ),
+                {}
+            )
+            raise ExceptionClass('%s %s' % (error_msg, extra_info))
+        return r.json or r.text, r.headers
     return wrapped
 
 class Pocket:
@@ -41,58 +49,28 @@ class Pocket:
             503: 'Read It Later\'s sync server is down for scheduled maintenance.',
         }
 
+    @method_wrapper
     def add(self, url, title=None, ref_id=None):
-        payload = {
-            'url': url,
-            'title': title,
-            'ref_id': ref_id,
-        }
-        payload.update(self._payload)
-        r = requests.post(self.api_endpoints['add'], data=payload)
-        if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
-            extra_info = r.headers.get('X-Error')
-            raise Exception('%s %s' % (error_msg, extra_info))
-        print r.content
-        return self
+        pass
 
     def send(self, url_map=None, read_map=None, update_title=None, update_tags=None):
         pass
 
-    def get_list(self, format, state, myAppOnly, since, count, page, tags):
+    def get(self, format, state, myAppOnly, since, count, page, tags):
         pass
 
+    @method_wrapper
     def stats(self, format='json'):
-        r = requests.post(self.api_endpoints['stats'], data=self._payload)
-        if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
-            extra_info = r.headers.get('X-Error')
-            raise Exception('%s %s' % (error_msg, extra_info))
-        return json.loads(r.content)
+        pass
 
+    @method_wrapper
     def auth(self):
-        r = requests.post(self.api_endpoints['auth'], data=self._payload)
-        if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
-            extra_info = r.headers.get('X-Error')
-            raise Exception('%s %s' % (error_msg, extra_info))
-        print r.content
-        return self
+        pass
 
+    @method_wrapper
     def signup(self):
-        r = requests.post(self.api_endpoints['signup'], data=self._payload)
-        if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
-            extra_info = r.headers.get('X-Error')
-            raise Exception('%s %s' % (error_msg, extra_info))
-        return json.loads(r.content)
+        pass
 
     @method_wrapper
     def api(self):
-        r = requests.post(self.api_endpoints['api'], data={'apikey': self.api_key})
-        if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
-            extra_info = r.headers.get('X-Error')
-            raise Exception('%s %s' % (error_msg, extra_info))
-        print r.content
-        return r.headers
+        pass
