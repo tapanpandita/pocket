@@ -3,13 +3,13 @@ from setuptools import setup
 setup(
     name = "pocket", # easy_install pocket
     description = "api wrapper for getpocket.com",
-    long_description=open('README.md', 'rt').read(),
+    #long_description=open('README.md', 'rt').read(),
 
     # version
     # third part for minor release
     # second when api changes
     # first when it becomes stable someday
-    version = "0.1.0",
+    version = "0.1.1",
     author = 'Tapan Pandita',
     author_email = "tapan.pandita@gmail.com",
 
