@@ -40,6 +40,10 @@ class Pocket(object):
     official pocket api documentation at http://getpocket.com/api/docs
     '''
     def __init__(self, username, password, api_key):
+        self.api_key = api_key
+        self.username = username
+        self.password = password
+
         self._payload = {
             'apikey': self.api_key,
             'username': self.username,
