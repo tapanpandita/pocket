@@ -39,18 +39,40 @@ EXCEPTIONS = {
 
 
 def method_wrapper(fn):
+
     @wraps(fn)
     def wrapped(self, *args, **kwargs):
-        payload = dict([(k, v) for k, v in kwargs.iteritems() if v is None])
+        url = self.api_endpoints[fn.__name__]
+        payload = dict([(k, v) for k, v in kwargs.iteritems() if v is not None])
         payload.update(self._payload)
-        r = requests.post(self.api_endpoints[fn.__name__], data=payload)
-        if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
-            extra_info = r.headers.get('X-Error')
-            raise EXCEPTIONS.get(r.status_code, PocketException)(
-                '%s %s' % (error_msg, extra_info)
+
+        return self._make_request(url, payload)
+
+    return wrapped
+
+
+def bulk_wrapper(fn):
+
+    @wraps(fn)
+    def wrapped(self, *args, **kwargs):
+        wait = kwargs.pop('wait')
+
+        if wait:
+            query = dict(
+                [(k, v) for k, v in kwargs.iteritems() if v is not None]
             )
-        return r.json() or r.text, r.headers
+            self._bulk_query.append(query)
+
+            return self
+        else:
+            url = self.api_endpoints['send']
+            query = [kwargs]
+            payload = {
+                'actions': query,
+            }
+
+            return self._make_request(url, payload)
+
     return wrapped
 
 
@@ -64,15 +86,18 @@ class Pocket(object):
     def __init__(self, consumer_key, access_token):
         self.consumer_key = consumer_key
         self.access_token = access_token
+        self._bulk_query = []
 
         self._payload = {
             'consumer_key': self.consumer_key,
             'access_token': self.access_token,
         }
+
         self.api_endpoints = dict(
             (method, 'https://getpocket.com/v3/%s' % method)
             for method in "add,send,get".split(",")
         )
+
         self.statuses = {
             200: 'Request was successful',
             400: 'Invalid request, please make sure you follow the '
@@ -82,6 +107,18 @@ class Pocket(object):
                  'permission or rate limiting',
             503: 'Pocket\'s sync server is down for scheduled maintenance.',
         }
+
+    def _make_request(self, url, payload, headers=None):
+        r = requests.post(url, data=payload, headers=headers)
+
+        if r.status_code > 399:
+            error_msg = self.statuses.get(r.status_code)
+            extra_info = r.headers.get('X-Error')
+            raise EXCEPTIONS.get(r.status_code, PocketException)(
+                '%s %s' % (error_msg, extra_info)
+            )
+
+        return r.json() or r.text, r.headers
 
     @method_wrapper
     def add(self, url, title=None, tags=None, tweet_id=None):
@@ -115,7 +152,30 @@ class Pocket(object):
         http://getpocket.com/developer/docs/v3/modify
 
         '''
-        #TODO: Make individual method for each action, also handle bulk
+
+    @bulk_wrapper
+    def bulk_add(
+        self, item_id, ref_id=None, tags=None, time=None, title=None,
+        url=None, wait=True
+    ):
+        pass
+
+    @bulk_wrapper
+    def archive(self, item_id, time=None):
+        pass
+
+    def commit(self):
+        '''
+        This method executes the bulk query, flushes stored queries and
+        returns the response
+
+        '''
+        url = self.api_endpoints['send']
+        payload = {
+            'actions': self._bulk_query,
+        }
+
+        return self._make_request(url, payload)
 
     @staticmethod
     def auth(consumer_key, redirect_uri='http://example.com/', state=None):
