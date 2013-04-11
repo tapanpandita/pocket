@@ -83,6 +83,21 @@ class Pocket(object):
     official pocket api documentation at http://getpocket.com/developer/docs/overview
 
     '''
+    api_endpoints = dict(
+        (method, 'https://getpocket.com/v3/%s' % method)
+        for method in "add,send,get".split(",")
+    )
+
+    statuses = {
+        200: 'Request was successful',
+        400: 'Invalid request, please make sure you follow the '
+             'documentation for proper syntax',
+        401: 'Problem authenticating the user',
+        403: 'User was authenticated, but access denied due to lack of '
+             'permission or rate limiting',
+        503: 'Pocket\'s sync server is down for scheduled maintenance.',
+    }
+
     def __init__(self, consumer_key, access_token):
         self.consumer_key = consumer_key
         self.access_token = access_token
@@ -93,26 +108,12 @@ class Pocket(object):
             'access_token': self.access_token,
         }
 
-        self.api_endpoints = dict(
-            (method, 'https://getpocket.com/v3/%s' % method)
-            for method in "add,send,get".split(",")
-        )
-
-        self.statuses = {
-            200: 'Request was successful',
-            400: 'Invalid request, please make sure you follow the '
-                 'documentation for proper syntax',
-            401: 'Problem authenticating the user',
-            403: 'User was authenticated, but access denied due to lack of '
-                 'permission or rate limiting',
-            503: 'Pocket\'s sync server is down for scheduled maintenance.',
-        }
-
-    def _make_request(self, url, payload, headers=None):
+    @classmethod
+    def _make_request(cls, url, payload, headers=None):
         r = requests.post(url, data=payload, headers=headers)
 
         if r.status_code > 399:
-            error_msg = self.statuses.get(r.status_code)
+            error_msg = cls.statuses.get(r.status_code)
             extra_info = r.headers.get('X-Error')
             raise EXCEPTIONS.get(r.status_code, PocketException)(
                 '%s %s' % (error_msg, extra_info)
@@ -177,35 +178,47 @@ class Pocket(object):
 
         return self._make_request(url, payload)
 
-    @staticmethod
-    def auth(consumer_key, redirect_uri='http://example.com/', state=None):
-        '''
-        OAUTH2 authentication for getting the access token
-        http://getpocket.com/developer/docs/authentication
-
-        '''
+    @classmethod
+    def get_request_token(
+        cls, consumer_key, redirect_uri='http://example.com/', state=None
+    ):
         headers = {
             'X-Accept': 'application/json',
         }
         url = 'https://getpocket.com/v3/oauth/request'
-        data = {
+        payload = {
             'consumer_key': consumer_key,
             'redirect_uri': redirect_uri,
         }
 
         if state:
-            data['state'] = state
+            payload['state'] = state
 
-        r = requests.post(url, data=data, headers=headers)
-        code = r.json()['code']
+        return cls._make_request(url, payload, headers)[0]['code']
+
+    @classmethod
+    def get_access_token(cls, consumer_key, code):
+        headers = {
+            'X-Accept': 'application/json',
+        }
+        url = 'https://getpocket.com/v3/oauth/authorize'
+        payload = {
+            'consumer_key': consumer_key,
+            'code': code,
+        }
+
+        return cls._make_request(url, payload, headers)[0]['access_token']
+
+    @classmethod
+    def auth(cls, consumer_key, redirect_uri='http://example.com/', state=None):
+        '''
+        This is a test method for verifying if oauth worked
+        http://getpocket.com/developer/docs/authentication
+
+        '''
+        code = cls.get_request_token(consumer_key, redirect_uri, state)
 
         auth_url = 'https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s' % (code, redirect_uri)
         raw_input('Please open %s in your browser to authorize the app and press enter:' % auth_url)
 
-        url2 = 'https://getpocket.com/v3/oauth/authorize'
-        data2 = {
-            'consumer_key': consumer_key,
-            'code': code,
-        }
-        r2 = requests.post(url2, data=data2, headers=headers)
-        return r2.json()['access_token']
+        return cls.get_access_token(consumer_key, code)
