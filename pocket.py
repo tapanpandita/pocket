@@ -55,22 +55,22 @@ def bulk_wrapper(fn):
 
     @wraps(fn)
     def wrapped(self, *args, **kwargs):
-        wait = kwargs.pop('wait')
+        wait = kwargs.get('wait', True)
+        query = dict(
+            [(k, v) for k, v in kwargs.iteritems() if v is not None]
+        )
+        #TODO: Fix this hack
+        query['action'] = 'add' if fn.__name__ == 'bulk_add' else fn.__name__
 
         if wait:
-            query = dict(
-                [(k, v) for k, v in kwargs.iteritems() if v is not None]
-            )
             self._bulk_query.append(query)
-
             return self
         else:
             url = self.api_endpoints['send']
-            query = [kwargs]
             payload = {
-                'actions': query,
+                'actions': [query],
             }
-
+            payload.update(self._payload)
             return self._make_request(url, payload)
 
     return wrapped
@@ -110,6 +110,7 @@ class Pocket(object):
 
     @classmethod
     def _make_request(cls, url, payload, headers=None):
+        print payload
         r = requests.post(url, data=payload, headers=headers)
 
         if r.status_code > 399:
@@ -162,7 +163,7 @@ class Pocket(object):
         pass
 
     @bulk_wrapper
-    def archive(self, item_id, time=None):
+    def archive(self, item_id, time=None, wait=True):
         pass
 
     def commit(self):
@@ -175,6 +176,7 @@ class Pocket(object):
         payload = {
             'actions': self._bulk_query,
         }
+        payload.update(self._payload)
 
         return self._make_request(url, payload)
 
