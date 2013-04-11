@@ -42,6 +42,10 @@ def method_wrapper(fn):
 
     @wraps(fn)
     def wrapped(self, *args, **kwargs):
+        arg_names = list(fn.func_code.co_varnames)
+        arg_names.remove('self')
+        kwargs.update(dict(zip(arg_names, args)))
+
         url = self.api_endpoints[fn.__name__]
         payload = dict([(k, v) for k, v in kwargs.iteritems() if v is not None])
         payload.update(self._payload)
@@ -55,6 +59,10 @@ def bulk_wrapper(fn):
 
     @wraps(fn)
     def wrapped(self, *args, **kwargs):
+        arg_names = list(fn.func_code.co_varnames)
+        arg_names.remove('self')
+        kwargs.update(dict(zip(arg_names, args)))
+
         wait = kwargs.get('wait', True)
         query = dict(
             [(k, v) for k, v in kwargs.iteritems() if v is not None]
@@ -117,7 +125,7 @@ class Pocket(object):
             error_msg = cls.statuses.get(r.status_code)
             extra_info = r.headers.get('X-Error')
             raise EXCEPTIONS.get(r.status_code, PocketException)(
-                '%s %s' % (error_msg, extra_info)
+                '%s. %s' % (error_msg, extra_info)
             )
 
         return r.json() or r.text, r.headers
@@ -160,11 +168,91 @@ class Pocket(object):
         self, item_id, ref_id=None, tags=None, time=None, title=None,
         url=None, wait=True
     ):
-        pass
+        '''
+        Add a new item to the user's list
+        http://getpocket.com/developer/docs/v3/modify#action_add
+
+        '''
 
     @bulk_wrapper
     def archive(self, item_id, time=None, wait=True):
-        pass
+        '''
+        Move an item to the user's archive
+        http://getpocket.com/developer/docs/v3/modify#action_archive
+
+        '''
+
+    @bulk_wrapper
+    def readd(self, item_id, time=None, wait=True):
+        '''
+        Re-add (unarchive) an item to the user's list
+        http://getpocket.com/developer/docs/v3/modify#action_readd
+
+        '''
+
+    @bulk_wrapper
+    def favorite(self, item_id, time=None, wait=True):
+        '''
+        Mark an item as a favorite
+        http://getpocket.com/developer/docs/v3/modify#action_favorite
+
+        '''
+
+    @bulk_wrapper
+    def unfavorite(self, item_id, time=None, wait=True):
+        '''
+        Remove an item from the user's favorites
+        http://getpocket.com/developer/docs/v3/modify#action_unfavorite
+
+        '''
+
+    @bulk_wrapper
+    def delete(self, item_id, time=None, wait=True):
+        '''
+        Permanently remove an item from the user's account
+        http://getpocket.com/developer/docs/v3/modify#action_delete
+
+        '''
+
+    @bulk_wrapper
+    def tags_add(self, item_id, tags, time=None, wait=True):
+        '''
+        Add one or more tags to an item
+        http://getpocket.com/developer/docs/v3/modify#action_tags_add
+
+        '''
+
+    @bulk_wrapper
+    def tags_remove(self, item_id, tags, time=None, wait=True):
+        '''
+        Remove one or more tags from an item
+        http://getpocket.com/developer/docs/v3/modify#action_tags_remove
+
+        '''
+
+    @bulk_wrapper
+    def tags_replace(self, item_id, tags, time=None, wait=True):
+        '''
+        Replace all of the tags for an item with one or more provided tags
+        http://getpocket.com/developer/docs/v3/modify#action_tags_replace
+
+        '''
+
+    @bulk_wrapper
+    def tags_clear(self, item_id, time=None, wait=True):
+        '''
+        Remove all tags from an item.
+        http://getpocket.com/developer/docs/v3/modify#action_tags_clear
+
+        '''
+
+    @bulk_wrapper
+    def tag_rename(self, item_id, old_tag, new_tag, time=None, wait=True):
+        '''
+        Rename a tag. This affects all items with this tag.
+        http://getpocket.com/developer/docs/v3/modify#action_tag_rename
+
+        '''
 
     def commit(self):
         '''
@@ -177,6 +265,7 @@ class Pocket(object):
             'actions': self._bulk_query,
         }
         payload.update(self._payload)
+        self._bulk_query = []
 
         return self._make_request(url, payload)
 
@@ -184,6 +273,10 @@ class Pocket(object):
     def get_request_token(
         cls, consumer_key, redirect_uri='http://example.com/', state=None
     ):
+        '''
+        Returns the request token that can be used to fetch the access token
+
+        '''
         headers = {
             'X-Accept': 'application/json',
         }
@@ -200,6 +293,10 @@ class Pocket(object):
 
     @classmethod
     def get_access_token(cls, consumer_key, code):
+        '''
+        Fetches access token from using the request token and consumer key
+
+        '''
         headers = {
             'X-Accept': 'application/json',
         }
