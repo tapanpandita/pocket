@@ -119,14 +119,11 @@ class Pocket(object):
 
     @classmethod
     def _make_request(cls, url, payload, headers=None):
-        print payload
-        print url
         r = requests.post(url, data=payload, headers=headers)
 
         if r.status_code > 399:
             error_msg = cls.statuses.get(r.status_code)
             extra_info = r.headers.get('X-Error')
-            print r.headers
             raise EXCEPTIONS.get(r.status_code, PocketException)(
                 '%s. %s' % (error_msg, extra_info)
             )
