@@ -309,6 +309,11 @@ class Pocket(object):
         return cls._make_request(url, payload, headers)[0]['access_token']
 
     @classmethod
+    def get_auth_url(cls, code, redirect_uri):
+        auth_url = 'https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s' % (code, redirect_uri)
+        return auth_url
+
+    @classmethod
     def auth(cls, consumer_key, redirect_uri='http://example.com/', state=None):
         '''
         This is a test method for verifying if oauth worked
