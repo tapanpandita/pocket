@@ -24,7 +24,7 @@ pocket_instance = pocket.Pocket(consumer_key, access_token)
 
 ### Chaining Modify Methods
 
-All the modify methods can be chained together for creating one bulk query. If you don't wish to chain the methods, just pass wait=False.
+All the modify methods can be chained together for creating one bulk query. If you don't wish to chain the methods, just pass `wait=False`.
 
 ```python
 import pocket
