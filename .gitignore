@@ -31,6 +31,7 @@ pip-log.txt
 include/
 lib/
 local/
+.Python
 
 # ViM files
 .*.swp
