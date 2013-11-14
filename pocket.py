@@ -128,7 +128,7 @@ class Pocket(object):
                 '%s. %s' % (error_msg, extra_info)
             )
 
-        return r.json or r.text, r.headers
+        return r.json() or r.text, r.headers
 
     @method_wrapper
     def add(self, url, title=None, tags=None, tweet_id=None):
