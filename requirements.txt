@@ -1,4 +1,4 @@
 argparse==1.2.1
-distribute==0.6.36
-requests==1.2.0
+distribute==0.7.3
+requests==2.0.1
 wsgiref==0.1.2

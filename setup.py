@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name = "pocket", # easy_install pocket
+    name = "pocket", # pip install pocket
     description = "api wrapper for getpocket.com",
     #long_description=open('README.md', 'rt').read(),
 
@@ -9,7 +9,7 @@ setup(
     # third part for minor release
     # second when api changes
     # first when it becomes stable someday
-    version = "0.2.4",
+    version = "0.2.5",
     author = 'Tapan Pandita',
     author_email = "tapan.pandita@gmail.com",
 
