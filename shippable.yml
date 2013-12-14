@@ -4,4 +4,8 @@ python:
 # command to install dependencies
 install: "pip install -r requirements.txt --use-mirrors"
 # command to run tests
-script: nosetests
+before_script: mkdir -p shippable/codecoverage
+script:
+    - nosetests
+    - coverage run --branch pocket.py
+    - coverage xml -o shippable/codecoverage/coverage.xml pocket.py
