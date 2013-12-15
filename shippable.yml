@@ -6,10 +6,12 @@ python:
 # command to install dependencies
 install: "pip install -r requirements.txt --use-mirrors"
 # script to run before running tests
-before_script: mkdir -p shippable/codecoverage
+before_script:
+    - mkdir -p shippable/codecoverage
+    - mkdir -p shippable/testresults
 # command to run tests
 script:
-    - nosetests
+    - nosetests --with-xunit --xunit-file=shippable/testresults/nosetests.xml
     - coverage run --branch pocket.py
     - coverage xml -o shippable/codecoverage/coverage.xml pocket.py
 # notification settings
