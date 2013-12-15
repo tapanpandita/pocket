@@ -125,9 +125,14 @@ class Pocket(object):
             'access_token': self.access_token,
         }
 
+    @staticmethod
+    def _post_request(url, payload, headers):
+        r = requests.post(url, data=payload, headers=headers)
+        return r
+
     @classmethod
     def _make_request(cls, url, payload, headers=None):
-        r = requests.post(url, data=payload, headers=headers)
+        r = cls._post_request(url, payload, headers)
 
         if r.status_code > 399:
             error_msg = cls.statuses.get(r.status_code)
