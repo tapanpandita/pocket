@@ -48,7 +48,10 @@ def method_wrapper(fn):
         kwargs.update(dict(zip(arg_names, args)))
 
         url = self.api_endpoints[fn.__name__]
-        payload = dict([(k, v) for k, v in kwargs.iteritems() if v is not None])
+        payload = dict([
+            (k, v) for k, v in kwargs.iteritems()
+            if v is not None
+        ])
         payload.update(self._payload)
 
         return self._make_request(url, payload)
@@ -80,7 +83,11 @@ def bulk_wrapper(fn):
                 'actions': [query],
             }
             payload.update(self._payload)
-            return self._make_request(url, json.dumps(payload), headers={'content-type': 'application/json'})
+            return self._make_request(
+                url,
+                json.dumps(payload),
+                headers={'content-type': 'application/json'},
+            )
 
     return wrapped
 
@@ -89,7 +96,8 @@ class Pocket(object):
     '''
     This class implements a basic python wrapper around the pocket api. For a
     detailed documentation of the methods and what they do please refer the
-    official pocket api documentation at http://getpocket.com/developer/docs/overview
+    official pocket api documentation at
+    http://getpocket.com/developer/docs/overview
 
     '''
     api_endpoints = dict(
@@ -126,7 +134,6 @@ class Pocket(object):
         if r.status_code > 399:
             error_msg = cls.statuses.get(r.status_code)
             extra_info = r.headers.get('X-Error')
-            print r.headers
             raise EXCEPTIONS.get(r.status_code, PocketException)(
                 '%s. %s' % (error_msg, extra_info)
             )
@@ -270,7 +277,11 @@ class Pocket(object):
         payload.update(self._payload)
         self._bulk_query = []
 
-        return self._make_request(url, json.dumps(payload), headers={'content-type': 'application/json'})
+        return self._make_request(
+            url,
+            json.dumps(payload),
+            headers={'content-type': 'application/json'},
+        )
 
     @classmethod
     def get_request_token(
@@ -312,7 +323,9 @@ class Pocket(object):
         return cls._make_request(url, payload, headers)[0]['access_token']
 
     @classmethod
-    def auth(cls, consumer_key, redirect_uri='http://example.com/', state=None):
+    def auth(
+        cls, consumer_key, redirect_uri='http://example.com/', state=None,
+    ):
         '''
         This is a test method for verifying if oauth worked
         http://getpocket.com/developer/docs/authentication
@@ -320,7 +333,11 @@ class Pocket(object):
         '''
         code = cls.get_request_token(consumer_key, redirect_uri, state)
 
-        auth_url = 'https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s' % (code, redirect_uri)
-        raw_input('Please open %s in your browser to authorize the app and press enter:' % auth_url)
+        auth_url = 'https://getpocket.com/auth/authorize?request_token='\
+            '%s&redirect_uri=%s' % (code, redirect_uri)
+        raw_input(
+            'Please open %s in your browser to authorize the app and '
+            'press enter:' % auth_url
+        )
 
         return cls.get_access_token(consumer_key, code)

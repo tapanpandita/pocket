@@ -1,6 +1,8 @@
 Pocket
 ======
-[![Build Status](https://travis-ci.org/tapanpandita/pocket.png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
+[![Build Status](https://travis-ci.org/tapanpandita/pocket.png)](https://travis-ci.org/tapanpandita/pocket/)
+[![Pypi](https://badge.fury.io/py/pocket.png)](http://badge.fury.io/py/pocket)
+[![Crate stats](https://pypip.in/d/pocket/badge.png)](https://crate.io/packages/pocket/)
 
 A python wrapper for the [pocket api](http://getpocket.com/api/docs).
 
@@ -35,7 +37,7 @@ pocket_instance = pocket.Pocket(consumer_key, access_token)
 # perfoms all these actions in one request
 # NOTE: Each individual method returns the instance itself. The response
 # dictionary is not returned till commit is called on the instance.
-pocket_instance.archive(item_id1).archive(item_id2).favorite(item_id3).delete(item_id4).commit()
+response, headers = pocket_instance.archive(item_id1).archive(item_id2).favorite(item_id3).delete(item_id4).commit()
 
 # performs action immediately and returns a dictionary
 pocket_instance.archive(item_id1, wait=False)
