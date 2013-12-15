@@ -127,8 +127,6 @@ class Pocket(object):
 
     @classmethod
     def _make_request(cls, url, payload, headers=None):
-        print payload
-        print url
         r = requests.post(url, data=payload, headers=headers)
 
         if r.status_code > 399:

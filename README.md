@@ -45,7 +45,7 @@ pocket_instance.archive(item_id1, wait=False)
 
 ### OAUTH
 
-To get request token, use the get_access_token class method. To get the access token use the get_access_token method.
+To get request token, use the get_request_token class method. To get the access token use the get_access_token method.
 
 ```python
 from pocket import Pocket
