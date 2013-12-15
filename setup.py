@@ -9,7 +9,7 @@ setup(
     # third part for minor release
     # second when api changes
     # first when it becomes stable someday
-    version = "0.2.5",
+    version = "0.3.0",
     author = 'Tapan Pandita',
     author_email = "tapan.pandita@gmail.com",
 
@@ -18,7 +18,7 @@ setup(
 
     # as a practice no need to hard code version unless you know program wont
     # work unless the specific versions are used
-    install_requires = ["argparse", "distribute", "requests", "wsgiref"],
+    install_requires = ["requests", ],
 
     py_modules = ["pocket"],
 
