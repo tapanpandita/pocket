@@ -21,3 +21,8 @@ notifications:
             - tapan.pandita@gmail.com
         on_success: change
         on_failure: always
+# whitelist
+branches:
+    only:
+        - master
+        - develop
