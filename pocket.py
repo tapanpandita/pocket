@@ -309,7 +309,7 @@ class Pocket(object):
         return cls._make_request(url, payload, headers)[0]['code']
 
     @classmethod
-    def get_access_token(cls, consumer_key, code):
+    def get_credentials(cls, consumer_key, code):
         '''
         Fetches access token from using the request token and consumer key
 
@@ -323,7 +323,7 @@ class Pocket(object):
             'code': code,
         }
 
-        return cls._make_request(url, payload, headers)[0]['access_token']
+        return cls._make_request(url, payload, headers)[0]
 
     @classmethod
     def get_auth_url(cls, code, redirect_uri='http://example.com'):
