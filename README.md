@@ -3,6 +3,7 @@ Pocket
 [![Build Status](https://travis-ci.org/tapanpandita/pocket.png)](https://travis-ci.org/tapanpandita/pocket/)
 [![Pypi](https://badge.fury.io/py/pocket.png)](http://badge.fury.io/py/pocket)
 [![Crate stats](https://pypip.in/d/pocket/badge.png)](https://crate.io/packages/pocket/)
+[![Code Health](https://landscape.io/github/tapanpandita/pocket/master/landscape.png)](https://landscape.io/github/tapanpandita/pocket/master)
 
 A python wrapper for the [pocket api](http://getpocket.com/api/docs).
 
