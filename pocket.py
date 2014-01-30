@@ -151,7 +151,7 @@ class Pocket(object):
 
     @classmethod
     def make_request(cls, url, payload, headers=None):
-        cls._make_request(cls, url, payload, headers)
+        cls._make_request(url, payload, headers)
 
     @method_wrapper
     def add(self, url, title=None, tags=None, tweet_id=None):
@@ -337,8 +337,8 @@ class Pocket(object):
 
     @classmethod
     def get_auth_url(cls, code, redirect_uri='http://example.com'):
-        auth_url = 'https://getpocket.com/auth/authorize'
-        '?request_token=%s&redirect_uri=%s' % (code, redirect_uri)
+        auth_url = ('https://getpocket.com/auth/authorize'
+                    '?request_token=%s&redirect_uri=%s' % (code, redirect_uri))
         return auth_url
 
     @classmethod
