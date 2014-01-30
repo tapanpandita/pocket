@@ -52,9 +52,9 @@ def method_wrapper(fn):
             (k, v) for k, v in kwargs.iteritems()
             if v is not None
         ])
-        payload.update(self._payload)
+        payload.update(self.get_payload())
 
-        return self._make_request(url, payload)
+        return self.make_request(url, payload)
 
     return wrapped
 
@@ -75,15 +75,15 @@ def bulk_wrapper(fn):
         query['action'] = 'add' if fn.__name__ == 'bulk_add' else fn.__name__
 
         if wait:
-            self._bulk_query.append(query)
+            self.add_bulk_query(query)
             return self
         else:
             url = self.api_endpoints['send']
             payload = {
                 'actions': [query],
             }
-            payload.update(self._payload)
-            return self._make_request(
+            payload.update(self.get_payload())
+            return self.make_request(
                 url,
                 json.dumps(payload),
                 headers={'content-type': 'application/json'},
@@ -125,6 +125,12 @@ class Pocket(object):
             'access_token': self.access_token,
         }
 
+    def get_payload(self):
+        return self._payload
+
+    def add_bulk_query(self, query):
+        self._bulk_query.append(query)
+
     @staticmethod
     def _post_request(url, payload, headers):
         r = requests.post(url, data=payload, headers=headers)
@@ -142,6 +148,10 @@ class Pocket(object):
             )
 
         return r.json() or r.text, r.headers
+
+    @classmethod
+    def make_request(cls, url, payload, headers=None):
+        cls._make_request(cls, url, payload, headers)
 
     @method_wrapper
     def add(self, url, title=None, tags=None, tweet_id=None):
@@ -327,7 +337,8 @@ class Pocket(object):
 
     @classmethod
     def get_auth_url(cls, code, redirect_uri='http://example.com'):
-        auth_url = 'https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=%s' % (code, redirect_uri)
+        auth_url = 'https://getpocket.com/auth/authorize'
+        '?request_token=%s&redirect_uri=%s' % (code, redirect_uri)
         return auth_url
 
     @classmethod
