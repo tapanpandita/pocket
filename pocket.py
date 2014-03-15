@@ -151,7 +151,7 @@ class Pocket(object):
 
     @classmethod
     def make_request(cls, url, payload, headers=None):
-        cls._make_request(url, payload, headers)
+        return cls._make_request(url, payload, headers)
 
     @method_wrapper
     def add(self, url, title=None, tags=None, tweet_id=None):
