@@ -9,7 +9,7 @@ setup(
     # third part for minor release
     # second when api changes
     # first when it becomes stable someday
-    version = "0.3.2",
+    version = "0.3.3",
     author = 'Tapan Pandita',
     author_email = "tapan.pandita@gmail.com",
 
