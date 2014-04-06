@@ -71,7 +71,7 @@ def bulk_wrapper(fn):
         query = dict(
             [(k, v) for k, v in kwargs.iteritems() if v is not None]
         )
-        #TODO: Fix this hack
+        # TODO: Fix this hack
         query['action'] = 'add' if fn.__name__ == 'bulk_add' else fn.__name__
 
         if wait:
