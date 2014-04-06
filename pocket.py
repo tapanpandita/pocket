@@ -43,7 +43,7 @@ def method_wrapper(fn):
 
     @wraps(fn)
     def wrapped(self, *args, **kwargs):
-        arg_names = list(fn.func_code.co_varnames)
+        arg_names = list(fn.__code__.co_varnames)
         arg_names.remove('self')
         kwargs.update(dict(zip(arg_names, args)))
 
