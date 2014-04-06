@@ -49,7 +49,7 @@ def method_wrapper(fn):
 
         url = self.api_endpoints[fn.__name__]
         payload = dict([
-            (k, v) for k, v in kwargs.iteritems()
+            (k, v) for k, v in kwargs.items()
             if v is not None
         ])
         payload.update(self.get_payload())
@@ -69,7 +69,7 @@ def bulk_wrapper(fn):
 
         wait = kwargs.get('wait', True)
         query = dict(
-            [(k, v) for k, v in kwargs.iteritems() if v is not None]
+            [(k, v) for k, v in kwargs.items() if v is not None]
         )
         # TODO: Fix this hack
         query['action'] = 'add' if fn.__name__ == 'bulk_add' else fn.__name__
