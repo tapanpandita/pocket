@@ -10,7 +10,7 @@ A python wrapper for the [pocket api](http://getpocket.com/api/docs).
 Installation
 ------------
 ```
-pip install pocket
+pip3 install pocket
 ```
 
 Usage
@@ -20,7 +20,7 @@ You'll need your pocket consumer key. You can find this from your account page.
 You will also need the access token for the account you want to modify.
 Then, you need to create an instance of the pocket object
 
-```python
+```python3
 import pocket
 
 pocket_instance = pocket.Pocket(consumer_key, access_token)
@@ -30,7 +30,7 @@ pocket_instance = pocket.Pocket(consumer_key, access_token)
 
 All the modify methods can be chained together for creating one bulk query. If you don't wish to chain the methods, just pass `wait=False`.
 
-```python
+```python3
 import pocket
 
 pocket_instance = pocket.Pocket(consumer_key, access_token)
@@ -48,7 +48,7 @@ pocket_instance.archive(item_id1, wait=False)
 
 To get request token, use the get_request_token class method. To get the access token use the get_access_token method.
 
-```python
+```python3
 from pocket import Pocket
 
 request_token = Pocket.get_request_token(consumer_key=consumer_key, redirect_uri=redirect_uri)

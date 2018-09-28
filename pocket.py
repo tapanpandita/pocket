@@ -360,7 +360,7 @@ class Pocket(object):
 
         auth_url = 'https://getpocket.com/auth/authorize?request_token='\
             '%s&redirect_uri=%s' % (code, redirect_uri)
-        raw_input(
+        input(
             'Please open %s in your browser to authorize the app and '
             'press enter:' % auth_url
         )
