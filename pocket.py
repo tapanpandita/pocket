@@ -115,6 +115,8 @@ class Pocket(object):
         503: 'Pocket\'s sync server is down for scheduled maintenance.',
     }
 
+    timeout = 60
+
     def __init__(self, consumer_key, access_token):
         self.consumer_key = consumer_key
         self.access_token = access_token
@@ -132,13 +134,13 @@ class Pocket(object):
         self._bulk_query.append(query)
 
     @staticmethod
-    def _post_request(url, payload, headers):
-        r = requests.post(url, data=payload, headers=headers)
+    def _post_request(url, payload, headers, timeout):
+        r = requests.post(url, data=payload, headers=headers, timeout=timeout)
         return r
 
     @classmethod
     def _make_request(cls, url, payload, headers=None):
-        r = cls._post_request(url, payload, headers)
+        r = cls._post_request(url, payload, headers, cls.timeout)
 
         if r.status_code > 399:
             error_msg = cls.statuses.get(r.status_code)

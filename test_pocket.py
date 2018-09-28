@@ -44,9 +44,13 @@ class PocketTest(unittest.TestCase):
         }
 
         with patch('pocket.requests') as mock_requests:
-            pocket.Pocket._post_request(mock_url, mock_payload, mock_headers)
+            pocket.Pocket._post_request(mock_url, mock_payload, mock_headers, pocket.Pocket.timeout)
             mock_requests.post.assert_called_once_with(
                 mock_url,
                 data=mock_payload,
                 headers=mock_headers,
+                timeout=pocket.Pocket.timeout,
             )
+
+if __name__ == '__main__':
+    unittest.main()
