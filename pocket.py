@@ -168,7 +168,7 @@ class Pocket(object):
     @method_wrapper
     def get(
         self, state=None, favorite=None, tag=None, contentType=None,
-        sort=None, detailType=None, search=None, domain=None, since=None,
+        sort=None, detailType="complete", search=None, domain=None, since=None,
         count=None, offset=None
     ):
         '''
