@@ -4,8 +4,11 @@ python:
     - "3.2"
     - "3.3"
     - "3.4"
+    - "3.5"
+    - "3.6"
+    - "3.7"
 # command to install dependencies
-install: "pip install -r requirements.txt --use-mirrors"
+install: "pip install -r requirements.txt"
 # script to run before running tests
 before_script:
     - mkdir -p shippable/codecoverage
