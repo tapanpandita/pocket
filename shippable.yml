@@ -14,8 +14,8 @@ before_script:
 # command to run tests
 script:
     - nosetests --with-xunit --xunit-file=shippable/testresults/nosetests.xml
-    - coverage run --branch pocket.py
-    - coverage xml -o shippable/codecoverage/coverage.xml pocket.py
+    - coverage run pocket.py
+    - coverage html -d shippable/codecoverage pocket.py
 # notification settings
 notifications:
     email:
