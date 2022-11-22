@@ -1,7 +1,7 @@
 Pocket
 ======
 [![CircleCI](https://circleci.com/gh/tapanpandita/pocket.svg?style=svg)](https://circleci.com/gh/tapanpandita/pocket)
-[![Pypi](https://badge.fury.io/py/pocket.png)](http://badge.fury.io/py/pocket)
+[![Pypi](https://img.shields.io/pypi/v/pocket.svg)](https://pypi.python.org/pypi/pocket)
 
 
 A python wrapper for the [pocket api](http://getpocket.com/api/docs).
