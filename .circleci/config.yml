@@ -1,34 +1,19 @@
-language: python
-python:
-    - "2.7"
-    - "3.4"
-    - "3.5"
-    - "3.6"
-    - "3.7"
-    - "3.8"
-    - "3.9"
-    - "3.10"
-    - "3.11"
-# command to install dependencies
-install: "pip install -r requirements.txt"
-# script to run before running tests
-before_script:
-    - mkdir -p shippable/codecoverage
-    - mkdir -p shippable/testresults
-# command to run tests
-script:
-    - nosetests --with-xunit --xunit-file=shippable/testresults/nosetests.xml
-    - coverage run pocket.py
-    - coverage html -d shippable/codecoverage pocket.py
-# notification settings
-notifications:
-    email:
-        recipients:
-            - tapan.pandita@gmail.com
-        on_success: change
-        on_failure: always
-# whitelist
-branches:
-    only:
-        - master
-        - develop
+version: 2.1
+orbs:
+  python: circleci/python@2.0.3
+
+jobs:
+  build_and_test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: Run tests
+          command: nosetests
+
+workflows:
+  test_pocket:
+    jobs:
+      - build_and_test
