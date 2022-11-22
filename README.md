@@ -1,6 +1,5 @@
 Pocket
 ======
-[![Build Status](https://travis-ci.org/tapanpandita/pocket.png)](https://travis-ci.org/tapanpandita/pocket/)
 [![CircleCI](https://circleci.com/gh/tapanpandita/pocket.svg?style=svg)](https://circleci.com/gh/tapanpandita/pocket)
 [![Pypi](https://badge.fury.io/py/pocket.png)](http://badge.fury.io/py/pocket)
 
