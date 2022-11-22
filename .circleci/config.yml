@@ -50,18 +50,7 @@ jobs:
       - run:
           name: Run tests
           command: nosetests
-          
-  build_and_test_3_11:
-    docker:
-      - image: circleci/python:3.11
-    executor: python/default
-    steps:
-      - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: Run tests
-          command: nosetests
+
 
 workflows:
   test_pocket:
@@ -70,4 +59,3 @@ workflows:
       - build_and_test_3_8
       - build_and_test_3_9
       - build_and_test_3_10
-      - build_and_test_3_11
