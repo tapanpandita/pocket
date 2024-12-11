@@ -133,7 +133,7 @@ class Pocket(object):
 
     @staticmethod
     def _post_request(url, payload, headers):
-        r = requests.post(url, data=payload, headers=headers)
+        r = requests.post(url, data=payload, headers=headers, timeout=60)
         return r
 
     @classmethod
